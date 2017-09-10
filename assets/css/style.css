@@ -72,20 +72,48 @@ h4 { font-size: 20px; }
     width: 700px;
     left: calc(100vw / 2 - 350px);
     background-color: black;
-    background-size: cover;
+    background-size: 100%;
     background-repeat: no-repeat;
 }
 img#hero-fighter, img#enemy-fighter {
     display: none;
     position: relative;
-    top: 350px;
+    top: 150px;
     width: 150px;
     height: 150px;
     
 }
 #hero-fighter { 
-    left: -160px;
+    left: -180px;
 }
 #enemy-fighter {
-    right: -160px;
+    right: -180px;
+}
+#fighting-options {
+    display: none;
+    position: relative;
+    text-shadow: 0 0 3px white;
+    font-size: 35px;     
+    top: -150px;
+    text-align: justify;
+    text-align-last: center;
+}
+#fighting-options > a {
+    display: block;
+    
+    color: red;    
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+#player-stats {
+    position: relative;
+    top: -290px;
+    left: -460px;
+}
+
+#enemy-stats { 
+    position: relative;
+    top: -390px;
+    right: -460px;
 }

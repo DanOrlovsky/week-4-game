@@ -100,6 +100,7 @@ var megaMan = {
         selectImage:     "./assets/images/megaman/MegaMan-Select.gif",
         standingImage:   "./assets/images/megaman/MegaMan-Standing.gif",
         arenaBackground: "./assets/images/megaman/megaman-background.png",
+        magicPoints: 0,
         hitPoints: 200,
         attackPoints: 45,
         counterAttackMulti: 1.25,
@@ -113,8 +114,9 @@ var contra = {
         name: "contra",
         selectImage: "./assets/images/contra/Contra-Select.gif",
         standingImage: "./assets/images/contra/Contra-Standing.gif",
-        arenaBackground: "./assets/images/contra/contra-background.jpg",
+        arenaBackground: "./assets/images/contra/contra-background.png",
         hitPoints: 125,
+        magicPoints: 0,
         attackPoints: 30,
         counterAttackMulti: 1.5,
         counterAttackProbability: 25,
@@ -127,7 +129,7 @@ var link = {
         name: "link",
         selectImage: "./assets/images/link/Link-Select.gif",
         standingImage: "./assets/images/link/Link-Standing.gif",
-        arenaBackground: "./assets/images/link/link-background.png",
+        arenaBackground: "./assets/images/link/link-background.gif",
         hitPoints: 75,
         magicPoints: 100,
         magicPower: 45,
@@ -190,11 +192,17 @@ function displayEnemySelectScreen(){
     $("#enemy-" + player.character.name + "-select").css("display", "none");
 }
 
+function updateStats() {
+    $("#player-stats").html("<h1>PLAYER</h1><h1>HP: " + player.character.hitPoints + "</h1><h1 style=\"margin-top: 10px\">MP: " + player.character.magicPoints + "</h1>");
+    $("#enemy-stats").html("<h1>Enemy</h1><h1>HP: " + enemy.character.hitPoints + "</h1><h1 style=\"margin-top: 10px\">MP: " + enemy.character.magicPoints + "</h1>");
+}
 
 function displayBattleScreen() {
-    $("#battle-screen").css({"height": "500px", "background-image": "url('" + enemy.character.arenaBackground + "')" });
+    $("#battle-screen").css({"height": "300px", "background-image": "url('" + enemy.character.arenaBackground + "')" });
+    $("#fighting-options").css("display", "block");
     player.imageElement.css("display", "inline-block");
     enemy.imageElement.css("display", "inline-block");
+    updateStats();
 }
 
 $(document).ready(function() {

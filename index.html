@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="assets/css/reset.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="assets/javascript/game.js"></script>
+</head>
+
+<body>
+    <div class="options-screen">
+        <h1>Welcome to 8Bit Battlegrounds!</h1>
+        <hr />
+        <div id="hero-screen-wrapper">
+            <h1>Select your Hero!</h1>
+            <div id="mario-select" class="character-select hero-select" data-name="mario">
+                <img src="assets/images/mario/Mario-Select.gif" alt="Mario" />
+            </div>
+            <div id="contra-select" class="character-select hero-select" data-name="contra">
+                <img src="assets/images/contra/Contra-Select.gif" alt="Contra" />
+            </div>
+            <div id="link-select" class="character-select hero-select" data-name="link">
+                <img src="assets/images/link/Link-Select.gif" alt="Link" />
+            </div>
+            <div id="megaman-select" class="character-select hero-select" data-name="megaman">
+                <img src="assets/images/megaman/MegaMan-Select.gif" alt="Megaman" />
+            </div>
+            <div id="mudkip-select" class="character-select hero-select" data-name="mudkip">
+                <img src="assets/images/mudkip/MudKip-Select.gif" alt="MudKip" />
+            </div>
+        </div>
+        <div id="enemy-screen-wrapper">
+            <h2>Select your Opponent!</h2>
+            <div id="enemy-mario-select" class="character-select enemy-select" data-name="mario">
+                <img src="assets/images/mario/Mario-Select.gif" alt="Mario" />
+            </div>
+            <div id="enemy-contra-select" class="character-select enemy-select" data-name="contra">
+                <img src="assets/images/contra/Contra-Select.gif" alt="Contra" />
+            </div>
+            <div id="enemy-link-select" class="character-select enemy-select" data-name="link">
+                <img src="assets/images/link/Link-Select.gif" alt="Link" />
+            </div>
+            <div id="enemy-megaman-select" class="character-select enemy-select" data-name="megaman">
+                <img src="assets/images/megaman/MegaMan-Select.gif" alt="Megaman" />
+            </div>
+            <div id="enemy-mudkip-select" class="character-select enemy-select" data-name="mudkip">
+                <img src="assets/images/mudkip/MudKip-Select.gif" alt="MudKip" />
+            </div>
+        </div>
+        <div id="vs-display">
+            <img id="hero-image" />
+            <span class="big-text">VS.</span>
+            <img id="enemy-image" />
+        </div>
+    </div>
+    <div id="battle-screen">
+        <img id="hero-fighter" />
+        <span id="fighting-options">
+            
+        </span>
+        <img id="enemy-fighter" class="flipped" />
+    </div>
+</body>
+
+</html>

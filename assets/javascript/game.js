@@ -15,7 +15,7 @@ var selectMoveSound = "./assets/sounds/menu-move.mp3";
 var selectCharSound = "./assets/sounds/menu-select.mp3";
 var smackSound = "./assets/sounds/slap.wav";
 var dodgeSound = "./assets/sounds/dodge-sound.mp3";
-
+var unknownChar = "./assets/images/unknown.gif"
 
 var playerSelected = false;
 var enemySelected = false;
@@ -26,6 +26,7 @@ var enemyCanGo = false;
 var enemyList = [];
 var player;
 var enemy;
+var interval;  // ? w3schools ?
 // Basic qualities each character will posess.
 // We will override these in each of the character classes
 var characterQualities = {
@@ -172,14 +173,6 @@ function swapImage(charSwap, src) {
     charSwap.character.imageElement.attr("src", src);
 }
 
-// This function fires when the player is selected, moves on the enemySelectionScreen
-function selectPlayer(playerChar) {
-    player = playerChar;
-    player.character.imageElement = $("#hero-fighter");
-    player.character.imageElement.attr("src", player.character.standingImage);
-    $("#hero-image").attr("src", player.character.selectImage);
-    displayEnemySelectScreen();
-}
 
 /* THESE ARE NOT WORKING */
 function disableFightOptions() {
@@ -245,26 +238,42 @@ function startGameTimers() {
     startEnemyTimer();
     enemySelected = true;
     fightStarted = true;
-    setInterval(advanceTimers, 250);
+    interval = setInterval(advanceTimers, 250);
+}
+
+// This function fires when the player is selected, moves on the enemySelectionScreen
+function selectPlayer(playerChar) {
+    player = playerChar;
+    player.character.imageElement = $("#hero-fighter");
+    player.character.imageElement.attr("src", player.character.standingImage);
+    $("#hero-image").attr("src", player.character.selectImage);
+    displayEnemySelectScreen();
 }
 
 // Runs after an enemy is selected
 function selectEnemy(enemyChar) {
+    // assign the enemy
     enemy = enemyChar;
+    // removes the enemy selection screen
     $("#enemy-screen-wrapper").css({
         "opacity": 0,
         "display": "none"
     });
     $("#enemy-image").attr("src", enemy.character.selectImage);
+    // Grabs the playing image element
     enemy.character.imageElement = $("#enemy-fighter");
+    // Sets the opacity to 1 (when he dies the opacity goes to zero, this will reset it)
+    enemy.character.imageElement.css("opacity", 1); 
     swapImage(enemy, enemy.character.standingImage);
-    
-    displayBattleScreen();
+    // Show the battle screen
+    toggleBattleScreen("block");
+    // Starts the game timers!
     startGameTimers();
 }
 
 // Displays the enemy selection screen
 function displayEnemySelectScreen() {
+    $("#enemy-image").attr("src", unknownChar);
     $("#hero-screen-wrapper").css({
         "opacity": 0,
         "display": "none"
@@ -274,6 +283,9 @@ function displayEnemySelectScreen() {
         "display": "block"
     });
     $("#enemy-" + player.character.name + "-select").css("display", "none");
+    enemyList.forEach(function (currentValue) {
+        $("#enemy-" + currentValue + "-select").css("display", "none");
+    });
 }
 
 function updateStats() {
@@ -286,23 +298,25 @@ function updateStats() {
         $("#enemy-stats").append("<h1 style=\"margin-top: 10px\">MP: " + enemy.character.magicPoints + "</h1>");
     }
 }
-
-function displayBattleScreen() {
+function toggleBattleScreen(displayToggle) {
+    
     $("#battle-screen").css({
+        "display": displayToggle,
         "height": "300px",
         "background-image": "url('" + enemy.character.arenaBackground + "')"
     });
-    $("#fighting-options").css("display", "block");
-    $("#player-attack-bar").css("display", "block");
-    $("#enemy-attack-bar").css("display", "block");
-    player.character.imageElement.css("display", "inline-block");
-    if (player.character.magicPoints === 0) {
-
-    }
-    enemy.character.imageElement.css("display", "inline-block");
+    $("#fighting-options").css("display", displayToggle);
+    $("#player-attack-bar").css("display", displayToggle);
+    $("#enemy-attack-bar").css("display", displayToggle);
+    player.character.imageElement.css("display", (displayToggle === "none") ? "none" : "inline-block");
+    enemy.character.imageElement.css("display", (displayToggle === "none") ? "none" : "inline-block");
     updateStats();
 }
 
+/*
+ * Runs the dodge animation
+ * Since the X position doesn't matter, we can run the same animation for either player or enemy
+ */
 function runDodge(personDodging) { 
     playSound(dodgeSound);    
     personDodging.character.imageElement.animate({ top: "50px"}, 30, function(event) {
@@ -311,6 +325,9 @@ function runDodge(personDodging) {
     
 }
 
+/*
+ * Animation that runs when the player is hit
+ */
 function playerHit() {
     player.character.imageElement.animate({ left: "-200px"}, 100, function(event) {
         player.character.imageElement.animate({left: "-140px"}, 100, function(event) {
@@ -319,6 +336,9 @@ function playerHit() {
     });
 }
 
+/*
+ * Animation that runs when the enemy is hit.
+ */
 function enemyHit() {
     enemy.character.imageElement.animate({ right: "-200px"}, 100, function(event) {
         enemy.character.imageElement.animate({right: "-140px"}, 100, function(event) {
@@ -328,10 +348,26 @@ function enemyHit() {
 }
 
 /* 
-    THE FOLLOWING TWO METHODS SHOULD BE CONTAINED INTO ONE.  
-
-    
+ * Kills off the character but fading out their opacity.
+ */
+function killCharacter(deadChar) {
+    clearInterval(interval);
+    deadChar.character.imageElement.animate({ opacity: 0}, 1000, function() {
+        if(enemy.character.hitPoints <= 0) {
+            enemyList.push(deadChar.character.name);
+            if(enemyList.length >= 4) {
+                // we win!
+            } else {
+                toggleBattleScreen("none");
+                displayEnemySelectScreen();
+            }
+        }
+    });
+}
+/* 
+    THE FOLLOWING TWO METHODS SHOULD BE CONTAINED INTO ONE.      
 */
+
 function enemyAttackPlayer(isCounter = false) {
     
     var dodge = false;
@@ -420,6 +456,9 @@ function playerAttackEnemy(isCounter = false) {
                     runDodge(enemy);
                 }
                 updateStats();
+                if(enemy.character.hitPoints <= 0) {
+                    killCharacter(enemy);
+                }
                 player.character.imageElement.animate({
                     left: "-180px"
                 }, 300, function () {
@@ -496,7 +535,7 @@ $(document).ready(function () {
     $(document).keypress(function (event) {
         if (fightStarted) {
             //  A pressed
-            if (event.which == 97) {
+            if (event.key.toLowerCase() == 'a') {
                 playerAttackEnemy();
                 updateStats();
                 //  D pressed

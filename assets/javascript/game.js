@@ -16,7 +16,7 @@ var selectCharSound = "./assets/sounds/menu-select.mp3";
 var smackSound = "./assets/sounds/slap.wav";
 var dodgeSound = "./assets/sounds/dodge-sound.mp3";
 var explodeSound = "./assets/sounds/explosion.mp3";
-
+var attackStartSound = "./assets/sounds/attack-start.wav";
 // Game images unrelated to specific players
 var unknownChar = "./assets/images/unknown.gif"
 var charExplode = "./assets/images/char-explode.gif";
@@ -151,19 +151,12 @@ var link = {
     }
 };
 
-function gameConsoleLog(msg){ 
-    $("#game-console").prepend(msg + "<br />");
-}
 // Returns a random number
 function getRandom(outOf) {
     return Math.floor(Math.random() * outOf);
 }
 
-function displayText(person, characterText) {
-    var textElement = $("#battle-screen").append("<h1>" + characterText + "</h1>");
-    textElement.css("left", person.character.imageElement.css("left"));
-    textElement.css("top", person.character.imageElement.css("top") - "250px");
-}
+
 /*  This function will play audio by creating a new element, and then removes the element after the sound has finished.
     This makes layering of sounds possible.
 */
@@ -316,6 +309,17 @@ function updateStats() {
         $("#enemy-stats").append("<h1 style=\"margin-top: 10px\">MP: " + enemy.character.magicPoints + "</h1>");
     }
 }
+
+function displayText(person, characterText) {
+    var textElement = $("#battle-screen").append("<h1>" + characterText + "</h1>");
+    textElement.css("left", person.character.imageElement.css("left") - 200);
+    textElement.css("top", person.character.imageElement.css("top") - 650);
+}
+
+function gameConsoleLog(msg){ 
+    $("#game-console").prepend(msg + "<br />");
+}
+
 function toggleBattleScreen(displayToggle) {
     
     $("#battle-screen").css({
@@ -416,6 +420,8 @@ function enemyAttackPlayer(isCounter = false) {
         // If we have an attack
         if(attackPower > 0) {
             // We hit the enemy!
+           playSound(attackStartSound);
+           
             // Load enemy's attackingImage
             swapImage(enemy, enemy.character.attackingImage);   
             // Flag the enemy is attacking
@@ -482,6 +488,7 @@ function playerAttackEnemy(isCounter = false) {
         var attackPower = getRandom(player.character.attackPoints);
         if (attackPower > 0) {
             // We hit the enemy!
+            playSound(attackStartSound);
             // Load players attackingImage
             swapImage(player, player.character.attackingImage);   
             // Flag the player is attacking
@@ -584,7 +591,6 @@ $(document).ready(function () {
         if (fightStarted) {
             //  A pressed
             if (event.key.toLowerCase() == 'a') {
-
                 playerAttackEnemy();
                 updateStats();
                 //  D pressed
@@ -596,7 +602,7 @@ $(document).ready(function () {
             }
         }
     });
-    
+
     $("#option-attack").on("click", function() {
         playerAttackEnemy();
         updateStats();

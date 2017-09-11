@@ -172,3 +172,10 @@ img#hero-fighter, img#enemy-fighter {
     right: 20px;
     top: 60px;
 }
+
+#enemy-text { 
+    display: inline;
+    
+    color: orange;
+    padding-top: 200px;
+}

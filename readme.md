@@ -13,4 +13,7 @@ Game Font
 Joiro Hatgaya - http://www.dafont.com/joiro-hatgaya.d484  
 Game Sounds  
 KillKhan - https://freesound.org/people/killkhan/    
-OwlStorm - https://freesound.org/people/OwlStorm/  
+OwlStorm - https://freesound.org/people/OwlStorm/   
+
+Backgrounds  
+Free Battlebacks http://rmland.free.fr/battlebacks.php  

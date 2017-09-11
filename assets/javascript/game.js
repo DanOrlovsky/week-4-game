@@ -20,9 +20,7 @@ var explodeSound = "./assets/sounds/explosion.mp3";
 var unknownChar = "./assets/images/unknown.gif"
 var charExplode = "./assets/images/char-explode.gif";
 
-var playerSelected = false;
-var enemySelected = false;
-var defenderSelected = false;
+
 var fightStarted = false;
 var playerCanGo = false;
 var enemyCanGo = false;
@@ -157,7 +155,7 @@ function getRandom(outOf) {
 }
 
 function displayText(person, characterText) {
-    var textElement =$("#battle-screen").append("<h1>" + characterText + "</h1>");
+    var textElement = $("#battle-screen").append("<h1>" + characterText + "</h1>");
     textElement.css("left", person.character.imageElement.css("left"));
     textElement.css("top", person.character.imageElement.css("top") - "250px");
 }
@@ -245,7 +243,6 @@ function startGameTimers() {
     disableFightOptions();
     startPlayerTimer();
     startEnemyTimer();
-    enemySelected = true;
     fightStarted = true;
     interval = setInterval(advanceTimers, 250);
 }
@@ -264,7 +261,10 @@ function selectPlayer(playerChar) {
 function selectEnemy(enemyChar) {
     // assign the enemy
     enemy = enemyChar;
-
+    // If the enemy is mudKip - cut their dodge probability in half
+    if(enemy.character.name === "mudkip") {
+        enemy.character.dodgeProbability /= 2;
+    }
     gameConsoleLog("Enemy will be: " + enemy.character.name);
 
     // removes the enemy selection screen
@@ -370,6 +370,9 @@ function killCharacter(deadChar) {
     deadChar.character.imageElement.animate({ opacity: 0}, 1000, function() {
         if(enemy.character.hitPoints <= 0) {
             enemyList.push(deadChar.character.name);
+            var rewardHP = enemyList.length * getRandom(100);
+            player.character.hitPoints += rewardHP;
+            gameConsoleLog("Player was awarded an additional " + rewardHP + "hps!!");
             if(enemyList.length >= 4) {
                 // we win!
             } else {
@@ -377,6 +380,7 @@ function killCharacter(deadChar) {
                 displayEnemySelectScreen();
             }
         }
+        
     });
 }
 
@@ -385,6 +389,7 @@ function enemyAttackPlayer(isCounter = false) {
     // Assumes dodge and counterAttack are false    
     var dodge = false;
     var counterAttack = false;
+    var playerLost = false;
     // We either check if it's a genuine allowable attack, or if it's a counter
     if((!enemy.character.isAttacking && enemyCanGo && !player.character.isAttacking) || isCounter) {
         // Check odds of a dodge
@@ -428,13 +433,18 @@ function enemyAttackPlayer(isCounter = false) {
                 }
                 // Update the display
                 updateStats();
+                if(player.character.hitPoints <= 0) {
+                    gameConsoleLog(player.character.name + " has fallen!");
+                    killCharacter(player);
+                    playerLost = true;
+                }
                 // Animate
                 enemy.character.imageElement.animate({
                     right: "-180px"
                 }, 300, function () {
                     swapImage(enemy, enemy.character.standingImage);
                     enemy.character.isAttacking = false;
-                    if(counterAttack === true)  {
+                    if(counterAttack === true && !playerLost)  {
                         gameConsoleLog(player.character.name + " has counter-attacked!");
                         playerAttackEnemy(true);
                     } 
@@ -451,6 +461,7 @@ function enemyAttackPlayer(isCounter = false) {
 function playerAttackEnemy(isCounter = false) {
     var dodge = false;
     var counterAttack = false;
+    var enemyLost = false;
     if ((!player.character.isAttacking && playerCanGo && !enemy.character.isAttacking) || isCounter) {
         var enemyDodge = getRandom(100);
         if (enemyDodge <= enemy.character.dodgeProbability) {
@@ -488,13 +499,14 @@ function playerAttackEnemy(isCounter = false) {
                 if(enemy.character.hitPoints <= 0) {
                     gameConsoleLog(enemy.character.name + " has fallen!");
                     killCharacter(enemy);
+                    enemyLost = true;
                 }
                 player.character.imageElement.animate({
                     left: "-180px"
                 }, 300, function () {
                     swapImage(player, player.character.standingImage);
                     player.character.isAttacking = false;
-                    if(counterAttack === true) {
+                    if(counterAttack === true && !enemyLost) {
                         gameConsoleLog(enemy.character.name + " has counter-attacked!");
                         enemyAttackPlayer(true);
                     } 
@@ -571,7 +583,7 @@ $(document).ready(function () {
                 playerAttackEnemy();
                 updateStats();
                 //  D pressed
-            } else if (event.which == 100) {
+            } else if (event.key.toLowerCase() == 'm') {
 
                 //  M Pressed 
             } else if (event.which == 109) {
@@ -583,5 +595,4 @@ $(document).ready(function () {
         playerAttackEnemy();
         updateStats();
     })
-
 });

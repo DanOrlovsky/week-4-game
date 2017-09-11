@@ -15,7 +15,10 @@ var selectMoveSound = "./assets/sounds/menu-move.mp3";
 var selectCharSound = "./assets/sounds/menu-select.mp3";
 var smackSound = "./assets/sounds/slap.wav";
 var dodgeSound = "./assets/sounds/dodge-sound.mp3";
+var explodeSound = "./assets/sounds/explosion.mp3";
+
 var unknownChar = "./assets/images/unknown.gif"
+var charExplode = "./assets/images/char-explode.gif";
 
 var playerSelected = false;
 var enemySelected = false;
@@ -145,13 +148,19 @@ var link = {
     }
 };
 
-
+function gameConsoleLog(msg){ 
+    $("#game-console").prepend(msg + "<br />");
+}
 // Returns a random number
 function getRandom(outOf) {
     return Math.floor(Math.random() * outOf);
 }
 
-
+function displayText(person, characterText) {
+    var textElement =$("#battle-screen").append("<h1>" + characterText + "</h1>");
+    textElement.css("left", person.character.imageElement.css("left"));
+    textElement.css("top", person.character.imageElement.css("top") - "250px");
+}
 /*  This function will play audio by creating a new element, and then removes the element after the sound has finished.
     This makes layering of sounds possible.
 */
@@ -244,6 +253,7 @@ function startGameTimers() {
 // This function fires when the player is selected, moves on the enemySelectionScreen
 function selectPlayer(playerChar) {
     player = playerChar;
+    gameConsoleLog("Player Will be: " + player.character.name);
     player.character.imageElement = $("#hero-fighter");
     player.character.imageElement.attr("src", player.character.standingImage);
     $("#hero-image").attr("src", player.character.selectImage);
@@ -254,6 +264,9 @@ function selectPlayer(playerChar) {
 function selectEnemy(enemyChar) {
     // assign the enemy
     enemy = enemyChar;
+
+    gameConsoleLog("Enemy will be: " + enemy.character.name);
+
     // removes the enemy selection screen
     $("#enemy-screen-wrapper").css({
         "opacity": 0,
@@ -348,9 +361,11 @@ function enemyHit() {
 }
 
 /* 
- * Kills off the character but fading out their opacity.
+ * Kills off the character by fading out their opacity.
  */
 function killCharacter(deadChar) {
+    swapImage(deadChar, charExplode);
+    playSound(explodeSound);
     clearInterval(interval);
     deadChar.character.imageElement.animate({ opacity: 0}, 1000, function() {
         if(enemy.character.hitPoints <= 0) {
@@ -364,51 +379,63 @@ function killCharacter(deadChar) {
         }
     });
 }
-/* 
-    THE FOLLOWING TWO METHODS SHOULD BE CONTAINED INTO ONE.      
-*/
 
+// Pass isCounter to prevent a never-ending counterAttack loop.  This prevents countering a counter
 function enemyAttackPlayer(isCounter = false) {
-    
+    // Assumes dodge and counterAttack are false    
     var dodge = false;
     var counterAttack = false;
+    // We either check if it's a genuine allowable attack, or if it's a counter
     if((!enemy.character.isAttacking && enemyCanGo && !player.character.isAttacking) || isCounter) {
+        // Check odds of a dodge
         var playerDodge = getRandom(100);
         if(playerDodge <= player.character.dodgeProbability) {
             dodge = true;
         }
+        // If it's not a counter ....
         if(!isCounter) {
+            // Check the odds of a counter
             var counter = getRandom(100);
             if(counter <= player.character.counterAttackProbability) {
                 counterAttack = true;
             }
         }
+
+        // Check the attack power - TODO : ADD MINIMUM ATTACK DAMAGE TO PREVENT INCREDIBLY LOW ATTACK RATES
         var attackPower = getRandom(enemy.character.attackPoints);
+        // If we have an attack
         if(attackPower > 0) {
             // We hit the enemy!
-            // Load players attackingImage
+            // Load enemy's attackingImage
             swapImage(enemy, enemy.character.attackingImage);   
-            // Flag the player is attacking
+            // Flag the enemy is attacking
             enemy.character.isAttacking = true;
             // Run css animations
-            // Callback embeds another animation, runs the attack sound, and decrements the enemies health
+            // The callback will check for a dodge and animate the enemy back into position
             enemy.character.imageElement.animate({
                 right: "250px"
             }, 300, function () {
+                // If the player didn't dodge...
                 if(!dodge) {
+                    gameConsoleLog(enemy.character.name + " hit " + player.character.name + " for " + attackPower + "hps!");
                     playSound(smackSound);
                     playerHit();
                     player.character.hitPoints -= attackPower;
+                // If the player DID dodge
                 } else {
+                    gameConsoleLog(player.character.name + " dodged " + enemy.character.name + "'s attack!");
                     runDodge(player);
                 }
+                // Update the display
                 updateStats();
+                // Animate
                 enemy.character.imageElement.animate({
                     right: "-180px"
                 }, 300, function () {
                     swapImage(enemy, enemy.character.standingImage);
                     enemy.character.isAttacking = false;
                     if(counterAttack === true)  {
+                        gameConsoleLog(player.character.name + " has counter-attacked!");
                         playerAttackEnemy(true);
                     } 
                     if(!isCounter) {
@@ -449,14 +476,17 @@ function playerAttackEnemy(isCounter = false) {
                 left: "250px"
             }, 300, function () {
                 if(!dodge) {
+                    gameConsoleLog(player.character.name + " hit " + enemy.character.name + " for " + attackPower + "hps!");
                     playSound(smackSound);
                     enemyHit();
                     enemy.character.hitPoints -= attackPower;
                 } else {
+                    gameConsoleLog(enemy.character.name + " dodged " + player.character.name + "'s attack!");
                     runDodge(enemy);
                 }
                 updateStats();
                 if(enemy.character.hitPoints <= 0) {
+                    gameConsoleLog(enemy.character.name + " has fallen!");
                     killCharacter(enemy);
                 }
                 player.character.imageElement.animate({
@@ -465,6 +495,7 @@ function playerAttackEnemy(isCounter = false) {
                     swapImage(player, player.character.standingImage);
                     player.character.isAttacking = false;
                     if(counterAttack === true) {
+                        gameConsoleLog(enemy.character.name + " has counter-attacked!");
                         enemyAttackPlayer(true);
                     } 
                     if(!isCounter) {
@@ -536,6 +567,7 @@ $(document).ready(function () {
         if (fightStarted) {
             //  A pressed
             if (event.key.toLowerCase() == 'a') {
+
                 playerAttackEnemy();
                 updateStats();
                 //  D pressed

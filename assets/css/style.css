@@ -75,6 +75,20 @@ h4 { font-size: 20px; }
     background-size: 100%;
     background-repeat: no-repeat;
 }
+#game-console {
+    position: absolute;
+    top: 675px;
+    left: calc(100vw / 2 - 350px);  
+    height: 200px;
+    width: 700px;
+    text-align: left;
+    overflow: auto;
+    background-color: black;
+    border: 2px solid gray;
+    color: lawngreen;
+    font-family: Courier New, Courier, monospace;
+}
+
 img#hero-fighter, img#enemy-fighter {
     display: none;
     position: relative;

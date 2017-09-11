@@ -13,7 +13,7 @@
 
 <body>
     <div class="options-screen">
-        <h1>Welcome to 8Bit Battlegrounds!</h1>
+        <h1 style="padding-bottom: 20px">Welcome to 8Bit Battlegrounds!</h1>
         <hr />
         <div id="hero-screen-wrapper">
             <h1>Select your Hero!</h1>
@@ -58,7 +58,13 @@
         </div>
     </div>
     <div id="battle-screen">
+        <div id="player-attack-bar">
+            <div id="player-attack-progress">Ready</div>
+        </div>
         <img id="hero-fighter" />
+        <div id="enemy-attack-bar">
+            <div id="enemy-attack-progress">Ready</div>
+        </div>
         <img id="enemy-fighter" class="flipped" />
         <div id="fighting-options">
             <a class="fighting-option-text" id="option-attack" href="#">A - Attack</a>

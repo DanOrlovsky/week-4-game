@@ -100,10 +100,14 @@ img#hero-fighter, img#enemy-fighter {
 }
 #fighting-options > a {
     display: block;
-    
+    transition: 300ms all ease-in;    
     color: red;    
     text-decoration: none;
     margin-top: 10px;
+}
+
+#fighting-options > a:hover {
+    color: black;
 }
 
 #player-stats {
@@ -116,4 +120,38 @@ img#hero-fighter, img#enemy-fighter {
     position: relative;
     top: -390px;
     right: -460px;
+}
+
+.disabled, a.disabled {
+    pointer-events: none;
+    cursor: default;
+    color: gray;
+}
+
+#player-attack-bar, #enemy-attack-bar {
+    display: none;
+    width: 150px;
+    height: 20px;
+    position: absolute;
+    background-color: white;
+    box-shadow: 0 0 2px 5px orange;
+}
+
+#player-attack-progress, #enemy-attack-progress {
+    width: 0;
+    height: 20px;
+    background: #060D55; 
+    background: -webkit-linear-gradient(left, #060D55 , #6699ff); 
+    background: -o-linear-gradient(right, #060D55, #6699ff); 
+    background: -moz-linear-gradient(right, #060D55, #6699ff); 
+    background: linear-gradient(to right, #060D55 , #6699ff); 
+}
+
+#player-attack-bar {
+    top: 60px;
+    left: 20px;
+}
+#enemy-attack-bar {
+    right: 20px;
+    top: 60px;
 }

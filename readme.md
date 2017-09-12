@@ -19,6 +19,7 @@ Players can also defend against attacks by hitting the 'D' key or mouse-click th
 
 Good luck!!
 
+[Play Game!!](https://danorlovsky.github.io/week-4-game/)
 
 ##### Credits
 ---

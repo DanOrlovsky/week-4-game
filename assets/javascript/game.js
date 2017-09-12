@@ -21,7 +21,8 @@ var attackStartSound = "./assets/sounds/attack-start.wav";
 var unknownChar = "./assets/images/unknown.gif"
 var charExplode = "./assets/images/char-explode.gif";
 
-
+var quickDodgeAllowed = false;  //  Allows player to dodge for a short time while the enemy is attacking.
+var quickDodgeExecuted = false; //  Flags if the player executed a quick dodge
 var fightStarted = false;       //  Flags if the fight has started
 var playerCanGo = false;        //  Flags whether the player can attack
 var enemyCanGo = false;         //  Flags whether the enemy can attack
@@ -428,40 +429,46 @@ function enemyAttackPlayer(isCounter = false) {
             enemy.character.isAttacking = true;
             // Run css animations
             // The callback will check for a dodge and animate the enemy back into position
-            enemy.character.imageElement.animate({
-                right: "250px"
-            }, 300, function () {
-                // If the player didn't dodge...
-                if(!dodge) {
-                    gameConsoleLog(enemy.character.name + " hit " + player.character.name + " for " + attackPower + "hps!");
-                    playSound(smackSound);
-                    playerHit();
-                    player.character.hitPoints -= attackPower;
-                // If the player DID dodge
-                } else {
-                    gameConsoleLog(player.character.name + " dodged " + enemy.character.name + "'s attack!");
-                    dodgeAttack(player);
-                }
-                // Update the display
-                updateStats();
-                if(player.character.hitPoints <= 0) {
-                    gameConsoleLog(player.character.name + " has fallen!");
-                    killCharacter(player);
-                    playerLost = true;
-                }
-                // Animate
-                enemy.character.imageElement.animate({
-                    right: "-180px"
-                }, 300, function () {
-                    swapImage(enemy, enemy.character.standingImage);
-                    enemy.character.isAttacking = false;
-                    if(counterAttack === true && !playerLost)  {
-                        gameConsoleLog(player.character.name + " has counter-attacked!");
-                        playerAttackEnemy(true);
-                    } 
-                    if(!isCounter) {
-                        startEnemyTimer();
+            enemy.character.imageElement.animate({ right: "240px" }, 300, function() {
+                quickDodgeAllowed = true;
+                console.log("NOW!");
+                enemy.character.imageElement.animate({ right: "250px" }, 80, function() {
+                    quickDodgeAllowed = false;
+                    // If the player didn't dodge...
+                    if(!dodge && !quickDodgeExecuted) {
+                        gameConsoleLog(enemy.character.name + " hit " + player.character.name + " for " + attackPower + "hps!");
+                        playSound(smackSound);
+                        playerHit();
+                        player.character.hitPoints -= attackPower;
+                    // If the player DID dodge
+                    } else {
+                        if(quickDodgeExecuted){
+                            quickDodgeExecuted = false;
+                        }
+                        gameConsoleLog(player.character.name + " dodged " + enemy.character.name + "'s attack!");
+                        dodgeAttack(player);
                     }
+                    // Update the display
+                    updateStats();
+                    if(player.character.hitPoints <= 0) {
+                        gameConsoleLog(player.character.name + " has fallen!");
+                        killCharacter(player);
+                        playerLost = true;
+                    }
+                    // Animate
+                    enemy.character.imageElement.animate({
+                        right: "-180px"
+                    }, 300, function () {
+                        swapImage(enemy, enemy.character.standingImage);
+                        enemy.character.isAttacking = false;
+                        if(counterAttack === true && !playerLost)  {
+                            gameConsoleLog(player.character.name + " has counter-attacked!");
+                            playerAttackEnemy(true);
+                        } 
+                        if(!isCounter) {
+                            startEnemyTimer();
+                        }
+                    });
                 });
             });
             return true;            
@@ -594,10 +601,12 @@ $(document).ready(function () {
                 playerAttackEnemy();
                 updateStats();
                 //  D pressed
-            } else if (event.key.toLowerCase() == 'm') {
-
+            } else if (event.key.toLowerCase() == 'd') {
+                if(quickDodgeAllowed) {
+                    quickDodgeExecuted = true;
+                }
                 //  M Pressed 
-            } else if (event.which == 109) {
+            } else if (event.key.toLowerCase() == 'm') {
 
             }
         }
@@ -606,5 +615,11 @@ $(document).ready(function () {
     $("#option-attack").on("click", function() {
         playerAttackEnemy();
         updateStats();
-    })
+    });
+
+    $("#play-game").on("click", function() {
+        $("#welcome-screen").animate({ height: 0}, 300, function() {
+            $("welcome-screen").css("display", "none");
+        })
+    });
 });

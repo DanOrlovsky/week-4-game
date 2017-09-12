@@ -189,7 +189,7 @@ img#hero-fighter, img#enemy-fighter {
     padding-top: 200px;
 }
 
-@media screen and(max-width: 1366px) {
+@media screen and (min-width: 1366px) {
     .character-select > img {
         width: 75px;
         height: 75px;

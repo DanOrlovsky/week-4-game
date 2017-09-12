@@ -285,21 +285,28 @@ function selectEnemy(enemyChar) {
 
 // Displays the enemy selection screen
 function displayEnemySelectScreen() {
+    // Show the Questionmark box as a placeholder
     $("#enemy-image").attr("src", unknownChar);
+    // Make sure the hero selection screen his hidden
     $("#hero-screen-wrapper").css({
         "opacity": 0,
         "display": "none"
     });
+    // Make sure the wrapper for the enemySelectionScreen is visible
     $("#enemy-screen-wrapper").css({
         "opacity": 1,
         "display": "block"
     });
+    // Removes the player's character
     $("#enemy-" + player.character.name + "-select").css("display", "none");
+
+    // Removes characters that are in our enemy defeated list
     defeatedEnemyList.forEach(function (currentValue) {
         $("#enemy-" + currentValue + "-select").css("display", "none");
     });
 }
 
+// This updates the display of player and enemy stats. 
 function updateStats() {
     $("#player-stats").html("<h1>PLAYER</h1><h1 style=\"margin-top: 10px\">HP: " + player.character.hitPoints + "</h1>");
     if (player.character.magicPoints > 0) {
@@ -311,6 +318,7 @@ function updateStats() {
     }
 }
 
+// NOT WORKING.  THE PURPOSE OF THIS FUNCTION IS TO DISPLAY TEXT OVER THE CHARACTER (like -hp, DODGED, or others)
 function displayText(person, characterText) {
     var textElement = $("#battle-screen").append("<h1>" + characterText + "</h1>");
     textElement.css("left", person.character.imageElement.css("left") - 200);
@@ -380,9 +388,10 @@ function killCharacter(deadChar) {
     deadChar.character.imageElement.animate({ opacity: 0}, 1000, function() {
         if(enemy.character.hitPoints <= 0) {
             defeatedEnemyList.push(deadChar.character.name);
-            var rewardHP = defeatedEnemyList.length * getRandom(100);
-            player.character.hitPoints += rewardHP;
-            gameConsoleLog("Player was awarded an additional " + rewardHP + "hps!!");
+            // COMMENTED OUT UPPING THE PLAYERS HEALTH AFTER VICTORY NOW THAT DODGING CAN BE OVERRIDDEN
+            //var rewardHP = defeatedEnemyList.length * getRandom(100);
+            //player.character.hitPoints += rewardHP;
+            //gameConsoleLog("Player was awarded an additional " + rewardHP + "hps!!");
             if(defeatedEnemyList.length >= 4) {
                 // we win!
             } else {
@@ -611,7 +620,11 @@ $(document).ready(function () {
             }
         }
     });
-
+    $("#option-defend").on("click", function() {
+        if(quickDodgeAllowed) {
+            quickDodgeExecuted = true;
+        }
+    });
     $("#option-attack").on("click", function() {
         playerAttackEnemy();
         updateStats();

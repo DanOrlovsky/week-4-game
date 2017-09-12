@@ -202,4 +202,10 @@ img#hero-fighter, img#enemy-fighter {
         width: 75px;
         height: 75px;
     }
+    #battle-screen {
+        top: 200px;
+    }
+    #game-console {
+        top: 525px;
+    }
 }

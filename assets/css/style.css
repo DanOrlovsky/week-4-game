@@ -135,13 +135,13 @@ img#hero-fighter, img#enemy-fighter {
 
 #player-stats {
     position: relative;
-    top: -290px;
+    top: -250px;
     left: -460px;
 }
 
 #enemy-stats { 
     position: relative;
-    top: -390px;
+    top: -320px;
     right: -460px;
 }
 
@@ -183,10 +183,9 @@ img#hero-fighter, img#enemy-fighter {
 }
 
 #enemy-text { 
-    display: inline;
-    
+    display: block;
+    top: 400px;
     color: orange;
-    padding-top: 200px;
 }
 
 @media screen and (max-width: 1366px) {

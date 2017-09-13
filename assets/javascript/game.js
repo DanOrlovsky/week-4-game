@@ -17,6 +17,10 @@ var smackSound = "./assets/sounds/slap.wav";
 var dodgeSound = "./assets/sounds/dodge-sound.mp3";
 var explodeSound = "./assets/sounds/explosion.mp3";
 var attackStartSound = "./assets/sounds/attack-start.wav";
+var winSound = "./assets/sounds/playerWins.wav";
+var loseSound = "./assets/sounds/playerLose.wav";
+
+
 // Game images unrelated to specific players
 var unknownChar = "./assets/images/unknown.gif"
 var charExplode = "./assets/images/char-explode.gif";
@@ -26,6 +30,7 @@ var quickDodgeExecuted = false; //  Flags if the player executed a quick dodge
 var fightStarted = false;       //  Flags if the fight has started
 var playerCanGo = false;        //  Flags whether the player can attack
 var enemyCanGo = false;         //  Flags whether the enemy can attack
+var gameOver = false;
 var defeatedEnemyList = [];     //  List of defeated enemies
 var player;                     //  Object to hold the player character
 var enemy;                      //  Object to hold the enemy character
@@ -152,15 +157,21 @@ var link = {
     }
 };
 
+
+// **** UTILITY FUNCTIONS *****
 // Returns a random number
 function getRandom(outOf) {
     return Math.floor(Math.random() * outOf);
 }
 
+function findCenter(offset) {
+    return $(window).width() / 2 - offset;
+}
 
-/*  This function will play audio by creating a new element, and then removes the element after the sound has finished.
-    This makes layering of sounds possible.
-*/
+/*  
+ *  This function will play audio by creating a new element, and then removes the element after the sound has finished.
+ *  This makes layering of sounds possible.
+ */
 function playSound(soundPath) {
     // creates an audio element (need jquery)
     var audioElement = document.createElement("audio"); //$('<audio></audio>').src = audioFile;
@@ -179,6 +190,10 @@ function swapImage(charSwap, src) {
     charSwap.character.imageElement.attr("src", src);
 }
 
+// ***  END UTILITY *********
+
+
+
 
 /* THESE ARE NOT WORKING */
 function disableFightOptions() {
@@ -195,7 +210,10 @@ function enableFightOptions() {
 }
 
 
-/* This function runs the timers depending on game statuses */
+/*
+ * advanceTimers() is responsible for the wait-time before a character can attack.
+ * This will be referred to as the attack timer.
+ */
 function advanceTimers() {
     // Checks if the enemy timer has reached its max
     if(enemy.timer >= 100) {
@@ -223,21 +241,30 @@ function advanceTimers() {
     $("#enemy-attack-progress").css("width", enemy.timer + "%");
 }
 
-// resets the player's timer variables
+
+
+/*
+ *  Timer initialization is kept separate so we can reset either players separately after an attack.
+ *  Initializes the players attack timer
+ */
 function startPlayerTimer() {
     playerCanGo = false;
     player.timer = 0;
     $("#player-attack-progress").css("width", 0);
 }
 
-// resets the enemies timer variables
+/* 
+ *  Initializes the enemies attack timer.  
+ */
 function startEnemyTimer() {
     enemyCanGo = false;
     enemy.timer = 0;
     $("#enemy-attack-progress").css("width", 0);
 }
 
-// starts all the game timers
+/*
+ * Resets the entire game 
+ */
 function startGameTimers() {
     disableFightOptions();
     startPlayerTimer();
@@ -246,7 +273,6 @@ function startGameTimers() {
     interval = setInterval(advanceTimers, 250);
 }
 
-// This function fires when the player is selected, moves on the enemySelectionScreen
 function selectPlayer(playerChar) {
     player = playerChar;
     gameConsoleLog("Player Will be: " + player.character.name);
@@ -258,6 +284,8 @@ function selectPlayer(playerChar) {
 
 // Runs after an enemy is selected
 function selectEnemy(enemyChar) {
+    //  If we're selecting an enemy, we haven't won the game.
+    gameOver = false;   
     // assign the enemy
     enemy = enemyChar;
     // If the enemy is mudKip - cut their dodge probability in half
@@ -309,13 +337,13 @@ function displayEnemySelectScreen() {
 // This updates the display of player and enemy stats. 
 function updateStats() {
     $("#player-stats").html("<h1>PLAYER</h1><h1 style=\"margin-top: 10px\">HP: " + player.character.hitPoints + "</h1>");
-    if (player.character.magicPoints > 0) {
+    /*if (player.character.magicPoints > 0) {
         $("#player-stats").append("<h1 style=\"margin-top: 10px\">MP: " + player.character.magicPoints + "</h1>");
-    }
+    }*/
     $("#enemy-stats").html("<h1>Enemy</h1><h1 style=\"margin-top: 10px\">HP: " + enemy.character.hitPoints + "</h1>");
-    if (enemy.character.magicPoints > 0) {
+    /*if (enemy.character.magicPoints > 0) {
         $("#enemy-stats").append("<h1 style=\"margin-top: 10px\">MP: " + enemy.character.magicPoints + "</h1>");
-    }
+    }*/
 }
 
 // NOT WORKING.  THE PURPOSE OF THIS FUNCTION IS TO DISPLAY TEXT OVER THE CHARACTER (like -hp, DODGED, or others)
@@ -378,6 +406,54 @@ function enemyHit() {
     });
 }
 
+function togglePlayerLose() {
+    var gameScreen = $("#game-screen");
+    gameScreen.empty();
+    var playerImage = $("<img>").attr("src", player.character.selectImage).css({display: "block", "margin-left": 0 });
+    gameScreen.append(playerImage);
+    var center = findCenter(playerImage.width() / 2);
+    
+    playSound(loseSound);
+    playerImage.animate({ "margin-left": center }, 2000, function() {
+        playSound(explodeSound);
+        playerImage.attr("src", charExplode).animate({opacity: 0}, 1000);
+        gameScreen.append($("<h1>YOU LOSE!!!</h1>").animate({color: "red" }, 1000, function() {
+            gameOver = true;
+            gameScreen.append($("<h1>Press ENTER to try again!</h1>"));
+        }))
+    })
+}
+function togglePlayerWin() {
+    var gameScreen = $("#game-screen");
+    
+    gameScreen.empty();
+    playSound(winSound);
+    //  Create the element to display the character
+    var playerImage = $("<img>").attr("src", player.character.selectImage).css({ display: "block", margin: "0 auto"});
+    //  Calculate where we're going to animate the player to the right.
+    //  Attach the character to our game screen
+    gameScreen.append(playerImage);
+    console.log(playerImage.width());
+    var farRight = $(window).width() - playerImage.width(); //parseInt(playerImage.css("width").replace("px", ""));
+    var center = findCenter(playerImage.width() / 2);
+    
+    // Animate player to the far left
+    playerImage.animate({ "margin-left": "0"}, 1000, function() {
+        // Animate player to the far right
+        playerImage.animate({ "margin-left": farRight }, 1000, function() {
+            // Return player to the center
+            playerImage.animate({ "margin-left": center }, 1000, function() {
+                // Display win message
+                gameScreen.append($("<h1>You Win!!</h1>").animate({ "color": "red" }, 1000, function() {
+                    gameOver = true;
+                    // Give player option to play again.
+                    gameScreen.append("<h1>Press ENTER to start a new game!</h1>")        
+                }));
+            });
+        });
+    });    
+};
+
 /* 
  * Kills off the character by fading out their opacity.
  */
@@ -394,12 +470,16 @@ function killCharacter(deadChar) {
             //gameConsoleLog("Player was awarded an additional " + rewardHP + "hps!!");
             if(defeatedEnemyList.length >= 4) {
                 // we win!
+                togglePlayerWin();
             } else {
                 toggleBattleScreen("none");
                 displayEnemySelectScreen();
             }
         }
-        
+        else  {
+            // We lost
+            togglePlayerLose();
+        }
     });
 }
 
@@ -440,7 +520,7 @@ function enemyAttackPlayer(isCounter = false) {
             // The callback will check for a dodge and animate the enemy back into position
             enemy.character.imageElement.animate({ right: "240px" }, 300, function() {
                 quickDodgeAllowed = true;
-                console.log("NOW!");
+                
                 enemy.character.imageElement.animate({ right: "250px" }, 80, function() {
                     quickDodgeAllowed = false;
                     // If the player didn't dodge...
@@ -617,6 +697,12 @@ $(document).ready(function () {
                 //  M Pressed 
             } else if (event.key.toLowerCase() == 'm') {
 
+            } 
+            
+        }
+        if(event.key.toLowerCase() == 'enter') {
+            if(gameOver) {
+                window.location.reload(true);               
             }
         }
     });

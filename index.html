@@ -12,27 +12,29 @@
 </head>
 
 <body>
-    <div id="options-screen">
-        <h1>Welcome to 8bit Battlegrounds!</h1>
-        <hr />
-        <div id="hero-screen-wrapper">
-            <h1>Select your Hero!</h1>
-            <div id="mario-select" class="character-select hero-select" data-name="mario">
-                <img src="assets/images/mario/Mario-Select.gif" alt="Mario" />
+    <div id="game-screen">
+        <div id="options-screen">
+            <h1>Welcome to 8bit Battlegrounds!</h1>
+            <hr />
+            <div id="hero-screen-wrapper">
+                <h1>Select your Hero!</h1>
+                <div id="mario-select" class="character-select hero-select" data-name="mario">
+                    <img src="assets/images/mario/Mario-Select.gif" alt="Mario" />
+                </div>
+                <div id="contra-select" class="character-select hero-select" data-name="contra">
+                    <img src="assets/images/contra/Contra-Select.gif" alt="Contra" />
+                </div>
+                <div id="link-select" class="character-select hero-select" data-name="link">
+                    <img src="assets/images/link/Link-Select.gif" alt="Link" />
+                </div>
+                <div id="megaman-select" class="character-select hero-select" data-name="megaman">
+                    <img src="assets/images/megaman/MegaMan-Select.gif" alt="Megaman" />
+                </div>
+                <div id="mudkip-select" class="character-select hero-select" data-name="mudkip">
+                    <img src="assets/images/mudkip/MudKip-Select.gif" alt="MudKip" />
+                </div>
             </div>
-            <div id="contra-select" class="character-select hero-select" data-name="contra">
-                <img src="assets/images/contra/Contra-Select.gif" alt="Contra" />
-            </div>
-            <div id="link-select" class="character-select hero-select" data-name="link">
-                <img src="assets/images/link/Link-Select.gif" alt="Link" />
-            </div>
-            <div id="megaman-select" class="character-select hero-select" data-name="megaman">
-                <img src="assets/images/megaman/MegaMan-Select.gif" alt="Megaman" />
-            </div>
-            <div id="mudkip-select" class="character-select hero-select" data-name="mudkip">
-                <img src="assets/images/mudkip/MudKip-Select.gif" alt="MudKip" />
-            </div>
-        </div>
+        </div>  
         <div id="enemy-screen-wrapper">
             <h2>Select your Opponent!</h2>
             <div id="enemy-mario-select" class="character-select enemy-select" data-name="mario">
@@ -56,28 +58,32 @@
             <span class="big-text">VS.</span>
             <img id="enemy-image" />
         </div>
+
+        <div id="battle-screen">
+            <div id="player-attack-bar">
+                <div id="player-attack-progress">Ready</div>
+            </div>
+            <img id="hero-fighter" />
+            <div id="enemy-attack-bar">
+                <div id="enemy-attack-progress">Ready</div>
+            </div>
+            <img id="enemy-fighter" class="flipped" />
+            <div id="fighting-options">
+                <a class="fighting-option-text" id="option-attack" href="#">A - Attack</a>
+                <!-- a class="fighting-option-text" id="option-magic" href="#">M - Magic</a -->
+                <a class="fighting-option-text" id="option-defend" href="#">D - Dodge</a>
+            </div>
+            <div id="player-stats"></div>
+            <div id="enemy-stats"></div>
+        </div>
+        <div id="enemy-text">
+            
+        </div>
+        <div id="player-text">
+
+        </div>
+        <div id="game-console">Welcome to 8Bit Battlegrounds!</div>
     </div>
-    <div id="battle-screen">
-        <div id="player-attack-bar">
-            <div id="player-attack-progress">Ready</div>
-        </div>
-        <img id="hero-fighter" />
-        <div id="enemy-attack-bar">
-            <div id="enemy-attack-progress">Ready</div>
-        </div>
-        <img id="enemy-fighter" class="flipped" />
-        <div id="fighting-options">
-            <a class="fighting-option-text" id="option-attack" href="#">A - Attack</a>
-            <!-- a class="fighting-option-text" id="option-magic" href="#">M - Magic</a -->
-            <a class="fighting-option-text" id="option-defend" href="#">D - Dodge</a>
-        </div>
-        <div id="player-stats"></div>
-        <div id="enemy-stats"></div>
-    </div>
-    <span id="enemy-text">TEXT</span>
-    <span id="player-text"></span>
-    
-    <div id="game-console">Welcome to 8Bit Battlegrounds!</div>
 </body>
 
 </html>

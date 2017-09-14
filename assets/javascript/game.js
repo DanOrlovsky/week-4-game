@@ -48,9 +48,9 @@ var characterQualities = {
     arenaBackground: "",    //  Which background to use for the arena
     isAttacking: false,     //  Flag for whether we're attacking or not.
     hitPoints: 0,           //  How many hitpoints the character has
-    magicPoints: 0,         //  How many magicpoints the character has
-    magicPower: 0,          //  How much power each magic attack has
-    magicLoss: 0,           //  How much magic is lost with each magic attack   
+    magicPoints: 0,         //  How many magicpoints the character has DEPRECATED
+    magicPower: 0,          //  How much power each magic attack has   DEPRECATED
+    magicLoss: 0,           //  How much magic is lost with each magic attack DEPRECATED
     attackPoints: 0,        //  How many attack points can the player deliver
     counterAttackMulti: 0,  //  Counter-attack multiplier
     counterAttackProbability: 0,    //  What are the odds the player will counter attack?   (Out of 100)
@@ -192,24 +192,6 @@ function swapImage(charSwap, src) {
 
 // ***  END UTILITY *********
 
-
-
-
-/* THESE ARE NOT WORKING */
-function disableFightOptions() {
-    $("#option-attack").addClass("disabled");
-    $("#option-magic").addClass("disabled");
-    $("#option-defend").addClass("disabled");
-}
-
-function enableFightOptions() {
-    $("#option-attack").removeClass("disabled");
-    $("#option-magic").removeClass("disabled");
-    $("#option-defend").removeClass("disabled");
-    
-}
-
-
 /*
  * advanceTimers() is responsible for the wait-time before a character can attack.
  * This will be referred to as the attack timer.
@@ -227,14 +209,14 @@ function advanceTimers() {
         enemy.timer += enemy.character.attackWaitInc;
         enemy.timer = (enemy.timer > 100) ? 100 : enemy.timer;
     }
+    // Player is exactly the same
     if(player.timer >= 100) {
-        enableFightOptions();
         playerCanGo = true;
     }
     if(!playerCanGo) {
         player.timer += player.character.attackWaitInc;
         player.timer = (player.timer > 100) ? 100 : player.timer;
-        disableFightOptions();
+        
     }
     // update status bars.
     $("#player-attack-progress").css("width", player.timer + "%");
@@ -266,7 +248,7 @@ function startEnemyTimer() {
  * Resets the entire game 
  */
 function startGameTimers() {
-    disableFightOptions();
+    
     startPlayerTimer();
     startEnemyTimer();
     fightStarted = true;
@@ -337,20 +319,14 @@ function displayEnemySelectScreen() {
 // This updates the display of player and enemy stats. 
 function updateStats() {
     $("#player-stats").html("<h1>PLAYER</h1><h1 style=\"margin-top: 10px\">HP: " + player.character.hitPoints + "</h1>");
-    /*if (player.character.magicPoints > 0) {
-        $("#player-stats").append("<h1 style=\"margin-top: 10px\">MP: " + player.character.magicPoints + "</h1>");
-    }*/
     $("#enemy-stats").html("<h1>Enemy</h1><h1 style=\"margin-top: 10px\">HP: " + enemy.character.hitPoints + "</h1>");
-    /*if (enemy.character.magicPoints > 0) {
-        $("#enemy-stats").append("<h1 style=\"margin-top: 10px\">MP: " + enemy.character.magicPoints + "</h1>");
-    }*/
 }
 
-// NOT WORKING.  THE PURPOSE OF THIS FUNCTION IS TO DISPLAY TEXT OVER THE CHARACTER (like -hp, DODGED, or others)
+//
 function displayText(person, characterText) {
     
     var textElement = $("<span style='color: red; font-size: 28px; font-weight: 700'>").text(characterText)
-        .css( {left: parseInt(person.character.imageElement.css("left").replace("px", "")) - 50,
+        .css( { position: "absolute", left: findCenter(),
         top: parseInt(person.character.imageElement.css("top").replace("px", "")) - 270,
         position: "relative"
      });
@@ -735,7 +711,7 @@ $(document).ready(function () {
         
     })
     $("#close-instructions").on('click', function() {
-        $("#instruction-window").animate({ opacity: 0, "z-index": "-99999"});
+        $("#instruction-window").animate({ opacity: 0, "z-index": "-99999" });
     })
     $("#option-defend").on("click", function() {
         if(quickDodgeAllowed) {

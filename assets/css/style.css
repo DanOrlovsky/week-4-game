@@ -217,7 +217,7 @@ img#hero-fighter, img#enemy-fighter {
     background-color: #eee;
     border: 2px solid green;
     border-radius: 10px;
-    margin: 0 auto;
+    margin: 15px;
     line-height: 2em;
     padding: 20px;
     text-shadow: 0 0 3px gray;
@@ -231,6 +231,9 @@ img#hero-fighter, img#enemy-fighter {
 #instruction-window > h2 {
     font-size: 20px;
     margin-top: 10px;
+    color: red;
+}
+#instruction-window > h3 {
     color: red;
 }
 img.float-left {

@@ -421,6 +421,10 @@ function togglePlayerLose() {
         }))
     })
 }
+
+/*
+ *  Runs the animations when the player wins the game.
+ */ 
 function togglePlayerWin() {
     var gameScreen = $("#game-screen");
     
@@ -507,6 +511,11 @@ function enemyAttackPlayer(isCounter = false) {
         var attackPower = getRandom(enemy.character.attackPoints);
         // If we have an attack
         if(attackPower > 0) {
+            
+            // If the last attack was more than the amount of hitpoints the player has left, pin it to the amount of hitpoints.
+            // This will prevent negative hitpoints from occuring.
+            attackPower = (attackPower > player.character.hitPoints) ? player.character.hitPoints : attackPower;
+            
             // We hit the enemy!
            playSound(attackStartSound);
            
@@ -584,6 +593,10 @@ function playerAttackEnemy(isCounter = false) {
         var attackPower = getRandom(player.character.attackPoints);
         if (attackPower > 0) {
             // We hit the enemy!
+            // If the last attack was more than the amount of hitpoints the player has left, pin it to the amount of hitpoints.
+            // This will prevent negative hitpoints from occuring.
+            attackPower = (attackPower > enemy.character.hitPoints) ? enemy.character.hitPoints : attackPower;
+            
             playSound(attackStartSound);
             // Load players attackingImage
             swapImage(player, player.character.attackingImage);   

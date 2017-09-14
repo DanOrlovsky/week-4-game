@@ -348,9 +348,17 @@ function updateStats() {
 
 // NOT WORKING.  THE PURPOSE OF THIS FUNCTION IS TO DISPLAY TEXT OVER THE CHARACTER (like -hp, DODGED, or others)
 function displayText(person, characterText) {
-    var textElement = $("#battle-screen").append("<h1>" + characterText + "</h1>");
-    textElement.css("left", person.character.imageElement.css("left") - 200);
-    textElement.css("top", person.character.imageElement.css("top") - 650);
+    
+    var textElement = $("<span style='color: red; font-size: 28px; font-weight: 700'>").text(characterText)
+        .css( {left: parseInt(person.character.imageElement.css("left").replace("px", "")) - 50,
+        top: parseInt(person.character.imageElement.css("top").replace("px", "")) - 270,
+        position: "relative"
+     });
+     $("#battle-screen").append(textElement);
+     // Animates the text and removes the element from the DOM when finished.
+     textElement.animate({ opacity: 0, top: "-200px"}, 2000, function() {
+         $(this).remove();
+     })
 }
 
 function gameConsoleLog(msg){ 
@@ -385,38 +393,52 @@ function dodgeAttack(personDodging) {
 }
 
 /*
- * Animation that runs when the player is hit
+ * Animation that runs when a character is hit. 
+ * charHit is the character who was hit.  leftOrRight will toggle whether we are animating the 'left'
+ * or 'right' css property.
  */
-function playerHit() {
-    player.character.imageElement.animate({ left: "-200px"}, 100, function(event) {
-        player.character.imageElement.animate({left: "-140px"}, 100, function(event) {
-            player.character.imageElement.animate({left: "-180px"});
-        });
-    });
+function characterHitAnimation(charHit, leftOrRight) {
+    switch(leftOrRight) {
+        case 'left':
+            charHit.character.imageElement.animate({ left: "-200px"}, 100, function(event) {
+                charHit.character.imageElement.animate({ left: "-140px"}, 100, function(event) {
+                    charHit.character.imageElement.animate({ left: "-180px"});
+                });
+            });
+            break;
+        case 'right':
+            charHit.character.imageElement.animate({ right: "-200px"}, 100, function(event) {
+                charHit.character.imageElement.animate({ right: "-140px"}, 100, function(event) {
+                    charHit.character.imageElement.animate({ right: "-180px"});
+                });
+            });
+            break;
+        default:
+            break;
+    }
 }
 
 /*
- * Animation that runs when the enemy is hit.
+ * runs the player losing screen
  */
-function enemyHit() {
-    enemy.character.imageElement.animate({ right: "-200px"}, 100, function(event) {
-        enemy.character.imageElement.animate({right: "-140px"}, 100, function(event) {
-            enemy.character.imageElement.animate({right: "-180px"});
-        });
-    });
-}
-
 function togglePlayerLose() {
+    // Grab a reference to our game screen
     var gameScreen = $("#game-screen");
+    // Clear out the game screen
     gameScreen.empty();
+    // Create a new element with the player's image.
     var playerImage = $("<img>").attr("src", player.character.selectImage).css({display: "block", "margin-left": 0 });
+    //  Add the element to the game screen
     gameScreen.append(playerImage);
+    //  Runs our utility method
     var center = findCenter(playerImage.width() / 2);
     
     playSound(loseSound);
+    // Animates the player to the center.  When that animation is done, we change the image to the exploding gif and play
+    // the exploding sound.
     playerImage.animate({ "margin-left": center }, 2000, function() {
         playSound(explodeSound);
-        playerImage.attr("src", charExplode).animate({opacity: 0}, 1000);
+        playerImage.attr("src", charExplode).css({ "margin-left" : center + 75}).animate({opacity: 0}, 1000);
         gameScreen.append($("<h1>YOU LOSE!!!</h1>").animate({color: "red" }, 1000, function() {
             gameOver = true;
             gameScreen.append($("<h1>Press ENTER to try again!</h1>"));
@@ -433,7 +455,7 @@ function togglePlayerWin() {
     //  Calculate where we're going to animate the player to the right.
     //  Attach the character to our game screen
     gameScreen.append(playerImage);
-    console.log(playerImage.width());
+    
     var farRight = $(window).width() - playerImage.width(); //parseInt(playerImage.css("width").replace("px", ""));
     var center = findCenter(playerImage.width() / 2);
     
@@ -521,19 +543,21 @@ function enemyAttackPlayer(isCounter = false) {
             enemy.character.imageElement.animate({ right: "240px" }, 300, function() {
                 quickDodgeAllowed = true;
                 
-                enemy.character.imageElement.animate({ right: "250px" }, 80, function() {
+                enemy.character.imageElement.animate({ right: "250px" }, 150, function() {
                     quickDodgeAllowed = false;
                     // If the player didn't dodge...
                     if(!dodge && !quickDodgeExecuted) {
+                        displayText(player, "-" + attackPower);
                         gameConsoleLog(enemy.character.name + " hit " + player.character.name + " for " + attackPower + "hps!");
                         playSound(smackSound);
-                        playerHit();
+                        characterHitAnimation(player, "left");
                         player.character.hitPoints -= attackPower;
                     // If the player DID dodge
                     } else {
                         if(quickDodgeExecuted){
                             quickDodgeExecuted = false;
                         }
+
                         gameConsoleLog(player.character.name + " dodged " + enemy.character.name + "'s attack!");
                         dodgeAttack(player);
                     }
@@ -595,9 +619,10 @@ function playerAttackEnemy(isCounter = false) {
                 left: "250px"
             }, 300, function () {
                 if(!dodge) {
+                    displayText(enemy, "-" + attackPower);
                     gameConsoleLog(player.character.name + " hit " + enemy.character.name + " for " + attackPower + "hps!");
                     playSound(smackSound);
-                    enemyHit();
+                    characterHitAnimation(enemy, "right");
                     enemy.character.hitPoints -= attackPower;
                 } else {
                     gameConsoleLog(enemy.character.name + " dodged " + player.character.name + "'s attack!");
@@ -696,7 +721,6 @@ $(document).ready(function () {
                 }
                 //  M Pressed 
             } else if (event.key.toLowerCase() == 'm') {
-
             } 
             
         }
@@ -706,6 +730,13 @@ $(document).ready(function () {
             }
         }
     });
+    $("#instructions-link").on('click', function() {
+        $("#instruction-window").css('z-index', '99999').animate({ opacity: 1 }, 1000);
+        
+    })
+    $("#close-instructions").on('click', function() {
+        $("#instruction-window").animate({ opacity: 0, "z-index": "-99999"});
+    })
     $("#option-defend").on("click", function() {
         if(quickDodgeAllowed) {
             quickDodgeExecuted = true;

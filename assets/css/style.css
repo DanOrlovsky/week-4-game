@@ -249,6 +249,7 @@ img.float-right {
 }
 .loading-screen-wrapper {
     margin: auto;
+    padding-top: 50px;
 }
 .load-progress-wrapper {
     margin: 0 auto;

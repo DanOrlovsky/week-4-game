@@ -36,134 +36,43 @@ var player;                     //  Object to hold the player character
 var enemy;                      //  Object to hold the enemy character
 var interval;                   //  Object to hold the interval timer - use this to clear it. 
 
-
+function Character(name, selectImage, standingImg, attackImg, arenaBack, attackWaitInc, hitPts, attackPts, cam, cap, dodgeProb) {
+    this.name = name;                       //  How their name appears in css
+    this.selectImage = selectImage;         //  Path to selection screen image
+    this.standingImage = standingImg;       //  Path to standing Image  
+    this.attackingImage = attackImg;        //  Path to attacking image
+    this.attackWaitInc = attackWaitInc;     //  Increment to 100 to be prepared to attack
+    this.arenaBackground = arenaBack;        //  Which background to use for the arena
+    this.isAttacking = false;         //  Flag for whether we're attacking or not.
+    this.hitPoints = hitPts;                //  How many hitpoints the character has
+    this.attackPoints = attackPts;          //  How many attack points can the player deliver
+    this.counterAttackMulti = cam;          //  Counter-attack multiplier
+    this.counterAttackProbability = cap;    //  What are the odds the player will counter attack?   (Out of 100)
+    this.dodgeProbability = dodgeProb;      //  What are the odds the player will dodge? (out of 100)
+    this.imageElement = "";            //  The element we'll be drawing to
+}
 // Basic qualities each character will posess.
 // We will override these in each of the character classes
-var characterQualities = {
-    name: "",               //  How their name appears in css
-    selectImage: "",        //  Path to selection screen image
-    standingImage: "",      //  Path to standing Image  
-    attackingImage: "",     //  Path to attacking image
-    attackWaitInc: 0,       //  Increment to 100 to be prepared to attack
-    arenaBackground: "",    //  Which background to use for the arena
-    isAttacking: false,     //  Flag for whether we're attacking or not.
-    hitPoints: 0,           //  How many hitpoints the character has
-    magicPoints: 0,         //  How many magicpoints the character has DEPRECATED
-    magicPower: 0,          //  How much power each magic attack has   DEPRECATED
-    magicLoss: 0,           //  How much magic is lost with each magic attack DEPRECATED
-    attackPoints: 0,        //  How many attack points can the player deliver
-    counterAttackMulti: 0,  //  Counter-attack multiplier
-    counterAttackProbability: 0,    //  What are the odds the player will counter attack?   (Out of 100)
-    dodgeProbability: 0,            //  What are the odds the player will dodge? (out of 100)
-    imageElement: "",               //  The element we'll be drawing to
 
-};
-
-// Mario
-var mario = {
-    character: characterQualities = {
-        name: "mario",
-        selectImage: "./assets/images/mario/Mario-Select.gif",
-        standingImage: "./assets/images/mario/Mario-Standing.gif",
-        arenaBackground: "./assets/images/mario/mario-background.jpg",
-        attackingImage: "./assets/images/mario/Mario-Attacking.png",
-        attackWaitInc: 15,
-        hitPoints: 150,
-        magicPoints: 20,
-        magicPower: 25,
-        magicLoss: 5,
-        attackPoints: 35,
-        counterAttackMulti: 1.5,
-        counterAttackProbability: 15,
-        dodgeProbability: 15,
-    }
-};
-
-
-// Mudkip
-var mudKip = {
-    character: characterQualities = {
-        name: "mudkip",
-        selectImage: "./assets/images/mudkip/MudKip-Select.gif",
-        standingImage: "./assets/images/mudkip/MudKip-Standing.gif",
-        attackingImage: "./assets/images/mudkip/MudKip-Standing.gif",
-        arenaBackground: "./assets/images/mudkip/mudkip-background.png",
-        hitPoints: 65,
-        attackWaitInc: 5,
-        magicPoints: 100,
-        magicPower: 50,
-        magicLoss: 25,
-        attackPoints: 20,
-        counterAttackMulti: 3,
-        counterAttackProbability: 45,
-        dodgeProbability: 50,
-    }
-};
-
-
-// Megaman
-var megaMan = {
-    character: characterQualities = {
-        name: "megaman",
-        selectImage: "./assets/images/megaman/MegaMan-Select.gif",
-        standingImage: "./assets/images/megaman/MegaMan-Standing.gif",
-        arenaBackground: "./assets/images/megaman/megaman-background.png",
-        attackingImage: "./assets/images/megaman/MegaMan-Attacking.gif",
-        magicPoints: 0,
-        attackWaitInc: 20,
-        hitPoints: 200,
-        attackPoints: 45,
-        counterAttackMulti: 1.25,
-        counterAttackProbability: 3,
-        dodgeProbability: 5,
-    }
-};
-
-// The guy from Contra
-var contra = {
-    character: characterQualities = {
-        name: "contra",
-        selectImage: "./assets/images/contra/Contra-Select.gif",
-        standingImage: "./assets/images/contra/Contra-Standing.gif",
-        arenaBackground: "./assets/images/contra/contra-background.png",
-        attackingImage: "./assets/images/contra/Contra-Select.gif",
-        hitPoints: 125,
-        attackWaitInc: 20,
-        magicPoints: 0,
-        attackPoints: 30,
-        counterAttackMulti: 1.5,
-        counterAttackProbability: 25,
-        dodgeProbability: 25,
-    }
-};
-
-// Link
-var link = {
-    character: characterQualities = {
-        name: "link",
-        selectImage: "./assets/images/link/Link-Select.gif",
-        standingImage: "./assets/images/link/Link-Standing.gif",
-        arenaBackground: "./assets/images/link/link-background.png",
-        attackingImage: "./assets/images/link/Link-Attacking.gif",
-        hitPoints: 75,
-        magicPoints: 100,
-        attackWaitInc: 25,
-        magicPower: 45,
-        magicLoss: 20,
-        attackPoints: 60,
-        counterAttackMulti: 1.5,
-        counterAttackProbility: 25,
-        dodgeProbability: 25,
-    }
-};
+// name, selectImage, standingImg, attackImg, arenaBack, attackWaitInc,  hitPts, attackPts, cam, cap, dodgeProb
+var mario = new Character("mario", "./assets/images/mario/Mario-Select.gif", "./assets/images/mario/Mario-Standing.gif", "./assets/images/mario/Mario-Attacking.png",
+                            "./assets/images/mario/mario-background.jpg", 15, 150, 35, 1.5, 15, 15);
+var mudKip = new Character("mudkip", "./assets/images/mudkip/MudKip-Select.gif","./assets/images/mudkip/MudKip-Standing.gif","./assets/images/mudkip/MudKip-Standing.gif",
+                            "./assets/images/mudkip/mudkip-background.png",5, 65, 20, 3, 45, 50);
+var megaMan = new Character("megaman", "./assets/images/megaman/MegaMan-Select.gif", "./assets/images/megaman/MegaMan-Standing.gif", "./assets/images/megaman/MegaMan-Attacking.gif",
+                            "./assets/images/megaman/megaman-background.png", 20, 200, 45, 1.25, 3, 5);
+var contra = new Character("contra", "./assets/images/contra/Contra-Select.gif", "./assets/images/contra/Contra-Standing.gif", "./assets/images/contra/Contra-Select.gif",
+                            "./assets/images/contra/contra-background.png", 20, 125, 30, 1.5, 25, 25);
+var link = new Character("link", "./assets/images/link/Link-Select.gif","./assets/images/link/Link-Standing.gif", "./assets/images/link/Link-Attacking.gif", 
+                            "./assets/images/link/link-background.png", 25, 75, 60, 1.5, 25, 25);
 
 // All the game files stored in array so we can load them before the game starts.
 var gameFiles = [   
-    mario.character.selectImage, mario.character.standingImage, mario.character.arenaBackground, mario.character.attackingImage, 
-    mudKip.character.selectImage, mudKip.character.standingImage, mudKip.character.arenaBackground,
-    megaMan.character.selectImage,megaMan.character.standingImage, megaMan.character.arenaBackground, megaMan.character.attackingImage,
-    link.character.selectImage, link.character.standingImage, link.character.arenaBackground, link.character.attackingImage,
-    contra.character.selectImage, contra.character.standingImage, contra.character.arenaBackground, contra.character.attackingImage
+    mario.selectImage, mario.standingImage, mario.arenaBackground, mario.attackingImage, 
+    mudKip.selectImage, mudKip.standingImage, mudKip.arenaBackground,
+    megaMan.selectImage,megaMan.standingImage, megaMan.arenaBackground, megaMan.attackingImage,
+    link.selectImage, link.standingImage, link.arenaBackground, link.attackingImage,
+    contra.selectImage, contra.standingImage, contra.arenaBackground, contra.attackingImage
 ];
 // Loads all the game files using a recursive function
 // https://forum.jquery.com/topic/wait-until-all-images-are-loaded
@@ -221,7 +130,7 @@ function playSound(soundPath) {
 
 // This makes it easier to swap out which image is displayed for a character
 function swapImage(charSwap, src) {
-    charSwap.character.imageElement.attr("src", src);
+    charSwap.imageElement.attr("src", src);
 }
 
 // ***  END UTILITY *********
@@ -240,7 +149,7 @@ function advanceTimers() {
     // if not, advance the timer
     if(!enemyCanGo) {
         // this should be done in one line?  But we pin the width to 100 to prevent from status bar overflow (hidden-  duh)
-        enemy.timer += enemy.character.attackWaitInc;
+        enemy.timer += enemy.attackWaitInc;
         enemy.timer = (enemy.timer > 100) ? 100 : enemy.timer;
     }
     // Player is exactly the same
@@ -248,7 +157,7 @@ function advanceTimers() {
         playerCanGo = true;
     }
     if(!playerCanGo) {
-        player.timer += player.character.attackWaitInc;
+        player.timer += player.attackWaitInc;
         player.timer = (player.timer > 100) ? 100 : player.timer;
         
     }
@@ -293,10 +202,10 @@ function startGameTimers() {
 
 function selectPlayer(playerChar) {
     player = playerChar;
-    gameConsoleLog("Player Will be: " + player.character.name);
-    player.character.imageElement = $("#hero-fighter");
-    player.character.imageElement.attr("src", player.character.standingImage);
-    $("#hero-image").attr("src", player.character.selectImage);
+    gameConsoleLog("Player Will be: " + player.name);
+    player.imageElement = $("#hero-fighter");
+    player.imageElement.attr("src", player.standingImage);
+    $("#hero-image").attr("src", player.selectImage);
     displayEnemySelectScreen();
 }
 
@@ -308,22 +217,22 @@ function selectEnemy(enemyChar) {
     // assign the enemy
     enemy = enemyChar;
     // If the enemy is mudKip - cut their dodge probability in half
-    if(enemy.character.name === "mudkip") {
-        enemy.character.dodgeProbability /= 2;
+    if(enemy.name === "mudkip") {
+        enemy.dodgeProbability /= 2;
     }
-    gameConsoleLog("Enemy will be: " + enemy.character.name);
+    gameConsoleLog("Enemy will be: " + enemy.name);
 
     // removes the enemy selection screen
     $("#enemy-screen-wrapper").css({
         "opacity": 0,
         "display": "none"
     });
-    $("#enemy-image").attr("src", enemy.character.selectImage);
+    $("#enemy-image").attr("src", enemy.selectImage);
     // Grabs the playing image element
-    enemy.character.imageElement = $("#enemy-fighter");
+    enemy.imageElement = $("#enemy-fighter");
     // Sets the opacity to 1 (when he dies the opacity goes to zero, this will reset it)
-    enemy.character.imageElement.css("opacity", 1); 
-    swapImage(enemy, enemy.character.standingImage);
+    enemy.imageElement.css("opacity", 1); 
+    swapImage(enemy, enemy.standingImage);
     // Show the battle screen
     toggleBattleScreen("block");
     // Starts the game timers!
@@ -345,7 +254,7 @@ function displayEnemySelectScreen() {
         "display": "block"
     });
     // Removes the player's character
-    $("#enemy-" + player.character.name + "-select").css("display", "none");
+    $("#enemy-" + player.name + "-select").css("display", "none");
 
     // Removes characters that are in our enemy defeated list
     defeatedEnemyList.forEach(function (currentValue) {
@@ -355,8 +264,8 @@ function displayEnemySelectScreen() {
 
 // This updates the display of player and enemy stats. 
 function updateStats() {
-    $("#player-stats").html("<h1>PLAYER</h1><h1 style=\"margin-top: 10px\">HP: " + player.character.hitPoints + "</h1>");
-    $("#enemy-stats").html("<h1>Enemy</h1><h1 style=\"margin-top: 10px\">HP: " + enemy.character.hitPoints + "</h1>");
+    $("#player-stats").html("<h1>PLAYER</h1><h1 style=\"margin-top: 10px\">HP: " + player.hitPoints + "</h1>");
+    $("#enemy-stats").html("<h1>Enemy</h1><h1 style=\"margin-top: 10px\">HP: " + enemy.hitPoints + "</h1>");
 }
 
 //
@@ -364,7 +273,7 @@ function displayText(person, characterText) {
     
     var textElement = $("<span style='color: red; font-size: 28px; font-weight: 700'>").text(characterText)
         .css( { position: "absolute", left: findCenter(),
-        top: parseInt(person.character.imageElement.css("top").replace("px", "")) - 270,
+        top: parseInt(person.imageElement.css("top").replace("px", "")) - 270,
         position: "relative"
      });
      $("#battle-screen").append(textElement);
@@ -383,13 +292,13 @@ function toggleBattleScreen(displayToggle) {
     $("#battle-screen").css({
         "display": displayToggle,
         "height": "300px",
-        "background-image": "url('" + enemy.character.arenaBackground + "')"
+        "background-image": "url('" + enemy.arenaBackground + "')"
     });
     $("#fighting-options").css("display", displayToggle);
     $("#player-attack-bar").css("display", displayToggle);
     $("#enemy-attack-bar").css("display", displayToggle);
-    player.character.imageElement.css("display", (displayToggle === "none") ? "none" : "inline-block");
-    enemy.character.imageElement.css("display", (displayToggle === "none") ? "none" : "inline-block");
+    player.imageElement.css("display", (displayToggle === "none") ? "none" : "inline-block");
+    enemy.imageElement.css("display", (displayToggle === "none") ? "none" : "inline-block");
     updateStats();
 }
 
@@ -399,8 +308,8 @@ function toggleBattleScreen(displayToggle) {
  */
 function dodgeAttack(personDodging) { 
     playSound(dodgeSound);    
-    personDodging.character.imageElement.animate({ top: "50px"}, 100, function(event) {
-        personDodging.character.imageElement.animate({top: "150px"}, 100);
+    personDodging.imageElement.animate({ top: "50px"}, 100, function(event) {
+        personDodging.imageElement.animate({top: "150px"}, 100);
     });
     
 }
@@ -413,16 +322,16 @@ function dodgeAttack(personDodging) {
 function characterHitAnimation(charHit, leftOrRight) {
     switch(leftOrRight) {
         case 'left':
-            charHit.character.imageElement.animate({ left: "-200px"}, 100, function(event) {
-                charHit.character.imageElement.animate({ left: "-140px"}, 100, function(event) {
-                    charHit.character.imageElement.animate({ left: "-180px"});
+            charHit.imageElement.animate({ left: "-200px"}, 100, function(event) {
+                charHit.imageElement.animate({ left: "-140px"}, 100, function(event) {
+                    charHit.imageElement.animate({ left: "-180px"});
                 });
             });
             break;
         case 'right':
-            charHit.character.imageElement.animate({ right: "-200px"}, 100, function(event) {
-                charHit.character.imageElement.animate({ right: "-140px"}, 100, function(event) {
-                    charHit.character.imageElement.animate({ right: "-180px"});
+            charHit.imageElement.animate({ right: "-200px"}, 100, function(event) {
+                charHit.imageElement.animate({ right: "-140px"}, 100, function(event) {
+                    charHit.imageElement.animate({ right: "-180px"});
                 });
             });
             break;
@@ -440,7 +349,7 @@ function togglePlayerLose() {
     // Clear out the game screen
     gameScreen.empty();
     // Create a new element with the player's image.
-    var playerImage = $("<img>").attr("src", player.character.selectImage).css({display: "block", "margin-left": 0 });
+    var playerImage = $("<img>").attr("src", player.selectImage).css({display: "block", "margin-left": 0 });
     //  Add the element to the game screen
     gameScreen.append(playerImage);
     //  Runs our utility method
@@ -468,7 +377,7 @@ function togglePlayerWin() {
     gameScreen.empty();
     playSound(winSound);
     //  Create the element to display the character
-    var playerImage = $("<img>").attr("src", player.character.selectImage).css({ display: "block", margin: "0 auto"});
+    var playerImage = $("<img>").attr("src", player.selectImage).css({ display: "block", margin: "0 auto"});
     //  Calculate where we're going to animate the player to the right.
     //  Attach the character to our game screen
     gameScreen.append(playerImage);
@@ -500,12 +409,12 @@ function killCharacter(deadChar) {
     swapImage(deadChar, charExplode);
     playSound(explodeSound);
     clearInterval(interval);
-    deadChar.character.imageElement.animate({ opacity: 0}, 1000, function() {
-        if(enemy.character.hitPoints <= 0) {
-            defeatedEnemyList.push(deadChar.character.name);
+    deadChar.imageElement.animate({ opacity: 0}, 1000, function() {
+        if(enemy.hitPoints <= 0) {
+            defeatedEnemyList.push(deadChar.name);
             // COMMENTED OUT UPPING THE PLAYERS HEALTH AFTER VICTORY NOW THAT DODGING CAN BE OVERRIDDEN
             //var rewardHP = defeatedEnemyList.length * getRandom(100);
-            //player.character.hitPoints += rewardHP;
+            //player.hitPoints += rewardHP;
             //gameConsoleLog("Player was awarded an additional " + rewardHP + "hps!!");
             if(defeatedEnemyList.length >= 4) {
                 // we win!
@@ -535,56 +444,56 @@ function enemyAttackPlayer(isCounter = false) {
     var counterAttack = false;
     var playerLost = false;
     // We either check if it's a genuine allowable attack, or if it's a counter
-    if((!enemy.character.isAttacking && enemyCanGo && !player.character.isAttacking) || isCounter) {
+    if((!enemy.isAttacking && enemyCanGo && !player.isAttacking) || isCounter) {
         // Check odds of a dodge
         var playerDodge = getRandom(100);
-        if(playerDodge <= player.character.dodgeProbability) {
+        if(playerDodge <= player.dodgeProbability) {
             dodge = true;
         }
         // If it's not a counter ....
         if(!isCounter) {
             // Check the odds of a counter
             var counter = getRandom(100);
-            if(counter <= player.character.counterAttackProbability) {
+            if(counter <= player.counterAttackProbability) {
                 counterAttack = true;
             }
         }
         
         // Prevent 0 attack power.
-        var attackPower = getRandom(enemy.character.attackPoints) + 1; 
+        var attackPower = getRandom(enemy.attackPoints) + 1; 
             
         // If the last attack was more than the amount of hitpoints the player has left, pin it to the amount of hitpoints.
         // This will prevent negative hitpoints from occuring.
-        attackPower = (attackPower > player.character.hitPoints) ? player.character.hitPoints : attackPower;
+        attackPower = (attackPower > player.hitPoints) ? player.hitPoints : attackPower;
         
         // We hit the enemy!
         playSound(attackStartSound);
         
         // Load enemy's attackingImage
-        swapImage(enemy, enemy.character.attackingImage);   
+        swapImage(enemy, enemy.attackingImage);   
         // Flag the enemy is attacking
-        enemy.character.isAttacking = true;
+        enemy.isAttacking = true;
         
         // Run css animations
         // The callback will check for a dodge and animate the enemy back into position
-        enemy.character.imageElement.animate({ right: "240px" }, 300, function() {
+        enemy.imageElement.animate({ right: "240px" }, 300, function() {
             // Right before the enemy hits, we allow a dodge
             quickDodgeAllowed = true;
             
-            enemy.character.imageElement.animate({ right: "250px" }, 150, function() {
+            enemy.imageElement.animate({ right: "250px" }, 150, function() {
                 quickDodgeAllowed = false;
                 // If the player didn't dodge...
                 if(!dodge && !quickDodgeExecuted) {
                     // Display to the battle screen
                     displayText(player, "-" + attackPower);
                     // Add the event to the console log
-                    gameConsoleLog(enemy.character.name + " hit " + player.character.name + " for " + attackPower + "hps!");
+                    gameConsoleLog(enemy.name + " hit " + player.name + " for " + attackPower + "hps!");
                     // Play the hit sound
                     playSound(smackSound);
                     // Animate the player being hit
                     characterHitAnimation(player, "left");
                     // Take away the player's health
-                    player.character.hitPoints -= attackPower;
+                    player.hitPoints -= attackPower;
                 // If the player DID dodge
                 } else {
                     if(quickDodgeExecuted){
@@ -592,30 +501,30 @@ function enemyAttackPlayer(isCounter = false) {
                         quickDodgeExecuted = false;
                     }
                     // Log the dodge
-                    gameConsoleLog(player.character.name + " dodged " + enemy.character.name + "'s attack!");
+                    gameConsoleLog(player.name + " dodged " + enemy.name + "'s attack!");
                     dodgeAttack(player);
                 }
                 // Update the display
                 updateStats();
                 // Check if the player is out of hitPoints
-                if(player.character.hitPoints <= 0) {
-                    gameConsoleLog(player.character.name + " has fallen!");
+                if(player.hitPoints <= 0) {
+                    gameConsoleLog(player.name + " has fallen!");
                     killCharacter(player);
                     playerLost = true;
                 }
                 // Now that the actual hit is done, animate player back to their original position.
-                enemy.character.imageElement.animate({
+                enemy.imageElement.animate({
                     right: "-180px"
                 }, 300, function () {
                     // Go back to the standing image
-                    swapImage(enemy, enemy.character.standingImage);
+                    swapImage(enemy, enemy.standingImage);
                     // Flag the attack is over
-                    enemy.character.isAttacking = false;
+                    enemy.isAttacking = false;
                     
                     // Do we get a counter attack?
                     // We also check to see if the player is still alive to prevent a "ghost" counter-attack from happening.
                     if(counterAttack === true && !playerLost)  {
-                        gameConsoleLog(player.character.name + " has counter-attacked!");
+                        gameConsoleLog(player.name + " has counter-attacked!");
                         playerAttackEnemy(true);
                     } 
                     // If this wasn't an enemy counter-attack, we have to restart the enemy's attack timer.
@@ -640,68 +549,68 @@ function playerAttackEnemy(isCounter = false) {
     var dodge = false;
     var counterAttack = false;
     var enemyLost = false;
-    if ((!player.character.isAttacking && playerCanGo && !enemy.character.isAttacking) || isCounter) {
+    if ((!player.isAttacking && playerCanGo && !enemy.isAttacking) || isCounter) {
         var enemyDodge = getRandom(100);
-        if (enemyDodge <= enemy.character.dodgeProbability) {
+        if (enemyDodge <= enemy.dodgeProbability) {
             // the enemy dodged!
             dodge = true;
         };
         if(!isCounter) {
             var enemyCounter = getRandom(100);
-            if(enemyCounter <= enemy.character.counterAttackProbability) {
+            if(enemyCounter <= enemy.counterAttackProbability) {
                 counterAttack = true;
             }
         }
-        var attackPower = getRandom(player.character.attackPoints) + 1;
+        var attackPower = getRandom(player.attackPoints) + 1;
         // We hit the enemy!
         // If the last attack was more than the amount of hitpoints the player has left, pin it to the amount of hitpoints.
         // This will prevent negative hitpoints from occuring.
-        attackPower = (attackPower > enemy.character.hitPoints) ? enemy.character.hitPoints : attackPower;
+        attackPower = (attackPower > enemy.hitPoints) ? enemy.hitPoints : attackPower;
         
         playSound(attackStartSound);
         // Load players attackingImage
-        swapImage(player, player.character.attackingImage);   
+        swapImage(player, player.attackingImage);   
         // Flag the player is attacking
-        player.character.isAttacking = true;
+        player.isAttacking = true;
         // Run css animations
         // Callback embeds another animation, runs the attack sound, and decrements the enemies health
-        player.character.imageElement.animate({
+        player.imageElement.animate({
             left: "250px"
         }, 300, function () {
             if(!dodge) {
                 // Displays the attack power
                 displayText(enemy, "-" + attackPower);
                 // Log in the console
-                gameConsoleLog(player.character.name + " hit " + enemy.character.name + " for " + attackPower + "hps!");
+                gameConsoleLog(player.name + " hit " + enemy.name + " for " + attackPower + "hps!");
                 // Plays the smack sound
                 playSound(smackSound);
                 // Runs the enemy hit
                 characterHitAnimation(enemy, "right");
                 // Removes the hitpoints
-                enemy.character.hitPoints -= attackPower;
+                enemy.hitPoints -= attackPower;
             } else {
                 //  Enemy dodged
-                gameConsoleLog(enemy.character.name + " dodged " + player.character.name + "'s attack!");
+                gameConsoleLog(enemy.name + " dodged " + player.name + "'s attack!");
                 //  Run the dodge animation
                 dodgeAttack(enemy);
             }
             //  Update stats on the screen
             updateStats();
             //  Check if the enemy died
-            if(enemy.character.hitPoints <= 0) {
+            if(enemy.hitPoints <= 0) {
                 //  Log the enemy has died
-                gameConsoleLog(enemy.character.name + " has fallen!");
+                gameConsoleLog(enemy.name + " has fallen!");
                 //  Run the death animation
                 killCharacter(enemy);
                 enemyLost = true;
             }
-            player.character.imageElement.animate({
+            player.imageElement.animate({
                 left: "-180px"
             }, 300, function () {
-                swapImage(player, player.character.standingImage);
-                player.character.isAttacking = false;
+                swapImage(player, player.standingImage);
+                player.isAttacking = false;
                 if(counterAttack === true && !enemyLost) {
-                    gameConsoleLog(enemy.character.name + " has counter-attacked!");
+                    gameConsoleLog(enemy.name + " has counter-attacked!");
                     enemyAttackPlayer(true);
                 } 
                 if(!isCounter) {
@@ -722,7 +631,7 @@ $(document).ready(function () {
         })
     })
     // Plays audio on mouse-over
-    $(".character-select").mouseenter(function () {
+    $("-select").mouseenter(function () {
         playSound(selectMoveSound);
     });
 

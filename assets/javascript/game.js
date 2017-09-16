@@ -624,6 +624,8 @@ function playerAttackEnemy(isCounter = false) {
 
 $(document).ready(function () {
     $("#game-console").css("display", "none");
+    
+    //  Loads the game images
     loadGameFiles(function() {
         $("#loading-screen").animate({"height": 0}, 1000, function() {
             $(this).css("display", "none");
@@ -631,7 +633,7 @@ $(document).ready(function () {
         })
     })
     // Plays audio on mouse-over
-    $("-select").mouseenter(function () {
+    $("character-select").mouseenter(function () {
         playSound(selectMoveSound);
     });
 

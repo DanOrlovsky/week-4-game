@@ -642,47 +642,11 @@ $(document).ready(function () {
     /* EVENT HANDLERS */
     $('.hero-select').on("click", function () {
         playSound(selectCharSound);
-        switch ($(this).data('name')) {
-            case 'mario':
-                selectPlayer(mario);
-                break;
-            case 'link':
-                selectPlayer(link);
-                break;
-            case 'mudkip':
-                selectPlayer(mudKip);
-                break;
-            case 'contra':
-                selectPlayer(contra);
-                break;
-            case 'megaman':
-                selectPlayer(megaMan);
-                break;
-            default:
-                break;
-        };
+        selectPlayer(eval($(this).data('name')));
     });
     $('.enemy-select').on("click", function () {
         playSound(selectCharSound);
-        switch ($(this).data('name')) {
-            case 'mario':
-                selectEnemy(mario);
-                break;
-            case 'link':
-                selectEnemy(link);
-                break;
-            case 'mudkip':
-                selectEnemy(mudKip);
-                break;
-            case 'contra':
-                selectEnemy(contra);
-                break;
-            case 'megaman':
-                selectEnemy(megaMan);
-                break;
-            default:
-                break;
-        }
+        selectEnemy(eval($(this).data('name')));
     });
     $(document).keypress(function (event) {
         if (fightStarted) {

@@ -3,7 +3,7 @@
  * Daniel Orlovsky
  * for UNCC Bootcamp Aug-2017
  * 
- * Welcome to a battle between some of the biggest 8Bit stars on the planet!  In a realm where there importance is no longer measured by
+ * Welcome to a battle between some of the biggest 8Bit stars on the planet!  In a realm where their importance is no longer measured by
  * how many kids exhaust HOURS guiding these heroes to victory, they now define their self-worth by battling EACH OTHER!
  */
 
@@ -78,6 +78,7 @@ var gameFiles = [
 // https://forum.jquery.com/topic/wait-until-all-images-are-loaded
 var filesLoaded = 0;
 var progress = 0;
+
 function loadGameFiles(callback) {
     var length = gameFiles.length;  
     var inc = 100 / gameFiles.length;

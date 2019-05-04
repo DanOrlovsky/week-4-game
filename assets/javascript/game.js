@@ -321,13 +321,25 @@ function dodgeAttack(personDodging) {
  * or 'right' css property.
  */
 function characterHitAnimation(charHit, leftOrRight) {
-    charHit.imageElement.animate({ left: "-200px"}, 100, function(event) {
-        charHit.imageElement.animate({ left: "-140px"}, 100, function(event) {
-            charHit.imageElement.animate({ left: "-180px"});
-        });
-    });
+    switch(leftOrRight) {
+        case 'left':
+            charHit.imageElement.animate({ left: "-200px"}, 100, function(event) {
+                charHit.imageElement.animate({ left: "-140px"}, 100, function(event) {
+                    charHit.imageElement.animate({ left: "-180px"});
+                });
+            });
+            break;
+        case 'right':
+            charHit.imageElement.animate({ right: "-200px"}, 100, function(event) {
+                charHit.imageElement.animate({ right: "-140px"}, 100, function(event) {
+                    charHit.imageElement.animate({ right: "-180px"});
+                });
+            });
+            break;
+        default:
+            break;
+    }
 }
-
 
 /*
  * runs the player losing screen

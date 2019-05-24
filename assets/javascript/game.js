@@ -10,7 +10,6 @@
 
 'use strict'
 
-alert("HELLO MARKUS!!")
 // GAME SOUNDS
 var selectMoveSound = "./assets/sounds/menu-move.mp3";
 var selectCharSound = "./assets/sounds/menu-select.mp3";
